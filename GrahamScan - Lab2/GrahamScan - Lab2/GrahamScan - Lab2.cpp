@@ -23,7 +23,10 @@ public:
 	{
 		x = y = 0.0;
 	}
-
+	bool operator ==(Point a)
+	{
+		return (a.x == this->x && a.y == this->y);
+	}
 	friend ostream& operator << (ostream& o, Point a)
 	{
 		o << "("<< a.x << "," << a.y << ")  ";
@@ -143,18 +146,64 @@ list<Point> GrahamScan(Point *v,int vsize)
 
 int main()
 {
-	Point points[] = { { 0, 3 },{ 0, 1 },{ 0, 2 },{0,5} };
+	Point pts[] = { { 0, 3 },{ 0, 1 },{ 5, 2 },{4,5} };
+	int n = sizeof(pts) / sizeof(Point);
+	vector<Point> points(pts,pts+n);
 
-	int n = sizeof(points) / sizeof(Point);
-
-	list<Point> l = GrahamScan(points,n);
-	cout << "Acoperirea convexa a punctelor este : ";
-	while (!l.empty())
+	list<Point> l = GrahamScan(pts,n);
+	//cout << l.size();
+	//cout << n;
+	if (l.size() == 2 || l.size() == 3)
 	{
-		cout << l.front();
-		l.pop_front();
+		cout << "I : ";
+		for (list<Point>::iterator it = l.begin(); it != l.end(); it++)
+			cout << (*it) << " ";
+
+		cout << endl << "J : ";
+
+		for (int i = 0; i < n; i++)
+		{
+			bool ok = false;
+			for (list<Point>::iterator it = l.begin(); it != l.end(); it++)
+				if (points[i] == (*it))
+				{
+					ok = true;
+					break;
+				}
+
+			if (!ok)
+				cout << points[i] << " ";
+		}
+
 	}
-	cout << endl;
+	else if (l.size() == 4)
+	{
+		// Caut cele mai indepartate 2 puncte
+		float d = -1.0;
+		Point p1, p2;
+		for (int j = 0; j < n; j++)
+			for (int i = 0; i < n; i++)
+				if ((points[i].x - points[j].x)*(points[i].x - points[j].x) + (points[i].y - points[j].y)*(points[i].y - points[j].y) > d)
+				{
+					d = (points[i].x - points[j].x)*(points[i].x - points[j].x) + (points[i].y - points[j].y)*(points[i].y - points[j].y);
+					p1 = points[i];
+					p2 = points[j];
+				}
+
+		cout << "I : " << p1 << " " << p2 << endl;
+
+		cout << endl << "J : ";
+
+		for (list<Point>::iterator it = l.begin(); it != l.end(); it++)
+		{
+			if ((*it) == p1 || (*it) == p2)
+				continue;
+			cout << (*it) << " ";
+		}
+
+	}
+	
+	
 
     return 0;
 }
