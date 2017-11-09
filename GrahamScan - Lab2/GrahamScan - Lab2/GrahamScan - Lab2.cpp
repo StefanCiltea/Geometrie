@@ -46,11 +46,11 @@ int orientation(const Point a, const Point b, const Point c)
 
 	Point vab(b.x - a.x, b.y - a.y);
 	Point vbc(c.x - b.x, c.y - b.y);
-	
+
 	double val = vab.x * vbc.y - vbc.x * vab.y;			// Cross product of the 2 vectors
 	if (val == 0) return val;
 
-	return ((val > 0) ? 2 : 1);			
+	return ((val > 0) ? 2 : 1);
 
 }
 
@@ -88,7 +88,7 @@ list<Point> GrahamScan(Point *v,int vsize)
 
 	// We find the bottom most point and assign it to p0
 	Point pmin = v[0];
-	int mpos;											
+	int mpos = 0;
 	for (int i = 1; i < vsize; i++)
 	{
 		if (v[i].y < pmin.y)
@@ -96,7 +96,7 @@ list<Point> GrahamScan(Point *v,int vsize)
 			mpos = i;
 			pmin = v[i];
 		}
-		else if ((v[i].y == pmin.y) || (v[i].x < pmin.x))
+		else if ((v[i].y == pmin.y) && (v[i].x < pmin.x))
 		{
 			mpos = i;
 			pmin = v[i];
@@ -112,7 +112,7 @@ list<Point> GrahamScan(Point *v,int vsize)
 
 	// Now we sort the array of points according to polar angle with respect to p0
 	qsort(v + 1, vsize - 1, sizeof(Point), compare);
-	
+
 
 	// Now we get rid of colinear points with p0 and chose the one that is at the largest distance from p0
 	mpos = 1;
@@ -120,13 +120,13 @@ list<Point> GrahamScan(Point *v,int vsize)
 	{
 		while (i < vsize - 1 && orientation(p0, v[i], v[i + 1]) == 0)
 			i++;
-		
+
 		v[mpos] = v[i];
 		mpos++;							// Update the size
 	}
 
 	vsize = mpos;
-	
+
 	result.push_back(v[0]);
 	result.push_back(v[1]);
 
@@ -146,7 +146,7 @@ list<Point> GrahamScan(Point *v,int vsize)
 
 int main()
 {
-	Point pts[] = { { 0, 3 },{ 0, 1 },{ 5, 2 },{4,5} };
+	Point pts[] = { { 0, 0 },{ 2,2 },{ 3, 3 },{1,1} };
 	int n = sizeof(pts) / sizeof(Point);
 	vector<Point> points(pts,pts+n);
 
@@ -178,32 +178,21 @@ int main()
 	}
 	else if (l.size() == 4)
 	{
-		// Caut cele mai indepartate 2 puncte
-		float d = -1.0;
-		Point p1, p2;
-		for (int j = 0; j < n; j++)
-			for (int i = 0; i < n; i++)
-				if ((points[i].x - points[j].x)*(points[i].x - points[j].x) + (points[i].y - points[j].y)*(points[i].y - points[j].y) > d)
-				{
-					d = (points[i].x - points[j].x)*(points[i].x - points[j].x) + (points[i].y - points[j].y)*(points[i].y - points[j].y);
-					p1 = points[i];
-					p2 = points[j];
-				}
+	    Point p4 = l.back();
+	    l.pop_back();
+	    Point p3 = l.back();
+	    l.pop_back();
+	    Point p2 = l.back();
+	    l.pop_back();
+	    Point p1 = l.back();
+        l.pop_back();
 
-		cout << "I : " << p1 << " " << p2 << endl;
+		cout << "I : " << p1 << p3 << " " << endl;
 
-		cout << endl << "J : ";
+		cout << endl << "J : " << p2 << " " << p4 << endl;
 
-		for (list<Point>::iterator it = l.begin(); it != l.end(); it++)
-		{
-			if ((*it) == p1 || (*it) == p2)
-				continue;
-			cout << (*it) << " ";
-		}
 
 	}
-	
-	
 
     return 0;
 }
