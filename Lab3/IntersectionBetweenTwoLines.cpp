@@ -15,6 +15,16 @@ struct Point
 	}
 };
 
+float maxf(const float f1,const float f2)
+{
+    return (f1 > f2)?f1:f2;
+}
+
+float minf(const float f1,const float f2)
+{
+    return (f1 < f2)?f1:f2;
+}
+
 Point lineLineIntersection(Point A, Point B, Point C, Point D)
 {
 	//	Ecuatia dreptei AB reprezentata ca a1x + b1y = c1
@@ -92,33 +102,40 @@ int doIntersect(Point p1, Point q1, Point p2, Point q2)
 
 int main()
 {
-	 Point p1(0,0);
-     Point q1(2,2);
-	 Point p2(3,3);
-	 Point q2(1,1);
+	Point p1(0,0);
+    Point q1(2,2);
+	Point p2(3,3);
+	Point q2(1,1);
+	
     int result = doIntersect(p1, q1, p2, q2);
+	
 	if (result == 1)
-	{
+	{	// Se intersecteaza
 		// Determinam punctele de intersectie
 		Point result = lineLineIntersection(p1, q1, p2, q2);
 		cout << " Segmentele se intersecteaza in punctul : " << result.x << " " << result.y;
 
 	} else if(result == 0)
 	{
-	    cout << "Segmentele sunt coliniare.\n";
-	    if(onSegment(p1,p2,q1) && onSegment(p1,q2,q1))
+		float maxSegm1 = maxf(p1,q1);
+		float minSegm1 = minf(p1,q1);
+		float maxSegm2 = maxf(p2,q2);
+		float minSegm2 = minf(p2,q2);
+		
+	    cout << "Segmentele sunt coliniare si ";
+	    if(onSegment(minSegm1,minSegm2,maxSegm1) && onSegment(minSegm1,maxSegm2,maxSegm1))
         {
-            //cout << "Intersectia este segmentul [p2,q2]";
-            cout << "Intersectia este segmentul [(" << p2.x << "," << p2.y << ")(" << q2.x << "," << q2.y << ")]";
+            // Intersectia este segmentul [p2,q2] 
+            cout << "intersectia este segmentul [(" << p2.x << "," << p2.y << ")(" << q2.x << "," << q2.y << ")]";
         }
-        else if(onSegment(p2,p1,q2) && onSegment(p2,q1,q2))
+        else if(onSegment(minSegm2,minSegm1,maxSegm2) && onSegment(minSegm2,maxSegm2,maxSegm2))
         {
-            //cout << "Intersectia este segmentul [p1,q1]";
+            // Intersectia este segmentul [p1,q1]
             cout << "Intersectia este segmentul [(" << p1.x << "," << p1.y << ")(" << q1.x << "," << q1.y << ")]";
         }
-        else if (onSegment(p1,p2,q1) && !onSegment(p1,q2,q1))
+        else if (onSegment(minSegm1,minSegm2,maxSegm1) && !onSegment(minSegm1,maxSegm2,maxSegm1))
         {
-            //cout << "Intersectia este segmentul [p2,q1]";
+            // Intersectia este segmentul [p2,q1]
             cout << "Intersectia este segmentul [(" << p2.x << "," << p2.y <<")(" << q1.x << "," << q1.y << ")]\n";
         }
         else if(onSegment(p2,p1,q2) && !onSegment(p2,q1,q2))
